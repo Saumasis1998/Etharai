@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from models import Employee, Attendance
-from schemas import EmployeeCreate, AttendanceCreate
+from backend.models import Employee, Attendance
+from backend.schemas import EmployeeCreate, AttendanceCreate
 
 
 def create_employee(db: Session, data: EmployeeCreate):
