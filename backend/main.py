@@ -1,11 +1,24 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from database import SessionLocal, engine
 import models, schemas, crud
+from fastapi.middleware.cors import CORSMiddleware
+
 
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="HRMS Lite API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 def get_db():
     db = SessionLocal()
@@ -24,8 +37,23 @@ def add_employee(data: schemas.EmployeeCreate, db: Session = Depends(get_db)):
     return crud.create_employee(db, data)
 
 @app.get("/employees", response_model=list[schemas.EmployeeResponse])
-def list_employees(db: Session = Depends(get_db)):
-    return crud.get_employees(db)
+def list_employees(
+    db: Session = Depends(get_db),
+    search: str | None = Query(None),
+    page: int = Query(1, ge=1),
+    limit: int = Query(5, le=50),
+):
+    query = db.query(models.Employee)
+
+    if search:
+        query = query.filter(
+            models.Employee.full_name.ilike(f"%{search}%") |
+            models.Employee.email.ilike(f"%{search}%") |
+            models.Employee.department.ilike(f"%{search}%")
+        )
+
+    offset = (page - 1) * limit
+    return query.offset(offset).limit(limit).all()
 
 @app.delete("/employees/{emp_id}")
 def remove_employee(emp_id: int, db: Session = Depends(get_db)):

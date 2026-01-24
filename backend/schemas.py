@@ -1,5 +1,6 @@
 from pydantic import BaseModel, EmailStr
 from datetime import date
+from pydantic import ConfigDict
 
 class EmployeeCreate(BaseModel):
     employee_id: str
@@ -7,16 +8,17 @@ class EmployeeCreate(BaseModel):
     email: EmailStr
     department: str
 
+
 class EmployeeResponse(EmployeeCreate):
     id: int
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
+
 
 class AttendanceCreate(BaseModel):
     date: date
     status: str
 
+
 class AttendanceResponse(AttendanceCreate):
     id: int
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)
