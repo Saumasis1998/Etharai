@@ -12,5 +12,6 @@ limits
 
 python-dotenv
 
-# Optional but recommended
+# Testing
 pytest
+pytest-cov

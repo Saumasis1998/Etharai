@@ -10,7 +10,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/employees")
+@router.post("/employees", response_model=EmployeeResponse)
 @limiter.limit("5/minute")
 def create_employee(
     request: Request,
