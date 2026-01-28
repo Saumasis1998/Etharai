@@ -8,6 +8,9 @@ class EmployeeRepository:
     def get_all(self):
         return self.db.query(Employee).all()
 
+    def get_by_id(self, id: int):
+        return self.db.query(Employee).filter(Employee.id == id).first()
+
     def create(self, employee: Employee):
         self.db.add(employee)
         self.db.commit()

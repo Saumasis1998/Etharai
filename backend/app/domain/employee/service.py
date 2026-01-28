@@ -8,3 +8,9 @@ class EmployeeService:
     def create_employee(self, data):
         employee = Employee(**data.dict())
         return self.repo.create(employee)
+
+    def get_all_employees(self):
+        return self.repo.get_all()
+
+    def get_employee_by_id(self, id: int):
+        return self.repo.get_by_id(id)
